@@ -1,0 +1,27 @@
+{
+    "name": "nextchatapi",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "build": "tsc && node dist/index.js",
+        "dev": "nodemon src/index.ts"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/node": "^20.10.3",
+        "nodemon": "^3.0.2",
+        "ts-node": "^10.9.1",
+        "typescript": "^5.3.2"
+    },
+    "dependencies": {
+        "@types/express": "^4.17.21",
+        "@types/morgan": "^1.9.9",
+        "cors": "^2.8.5",
+        "express": "^4.18.2",
+        "helmet": "^7.1.0",
+        "morgan": "^1.10.0"
+    }
+}
