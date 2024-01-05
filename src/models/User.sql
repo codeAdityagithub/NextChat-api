@@ -39,7 +39,6 @@ CREATE TABLE invitation (
     invitation_id SERIAL PRIMARY KEY,
     sender_id uuid REFERENCES users(user_id) ON DELETE CASCADE,
     recipient_id uuid REFERENCES users(user_id) ON DELETE CASCADE,
-    conversation_id INT REFERENCES conversation(conversation_id),
     status invitation_status DEFAULT 'pending', -- or use an enum for 'pending', 'accepted', 'rejected', etc.
     sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     -- Add more invitation-related fields as needed

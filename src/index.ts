@@ -12,6 +12,7 @@ import cors from "cors";
 import socketHandler from "./utils/socketHandler";
 import verifyToken from "./utils/verifyToken";
 import cookieParser from "cookie-parser";
+import verifyJWT from "./middleware/verifyJWT";
 
 const app = express();
 const server = http.createServer(app);
@@ -31,6 +32,8 @@ app.use(
         credentials: true,
     })
 );
+
+app.use(verifyJWT);
 
 app.use("/auth", authRouter);
 app.use("/invite", inviteRouter);
