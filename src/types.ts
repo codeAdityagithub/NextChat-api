@@ -2,7 +2,7 @@ import { Server, Socket } from "socket.io";
 import { ExtendedError } from "socket.io/dist/namespace";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 
-import {Request} from "express"
+import { Request } from "express";
 
 export type IoType = Server<
     DefaultEventsMap,
@@ -29,8 +29,14 @@ export interface RequestwUser extends Request {
 }
 
 export type UserType = {
-    user_id:string
-    user_name:string
-    user_email:string
-    user_password:string
-}
+    user_id: string;
+    user_name: string;
+    user_email: string;
+    user_password: string;
+};
+export type InvitationType = {
+    user_name: string;
+    user_email: string;
+    sent_at: string;
+    invitation_id: number;
+};
