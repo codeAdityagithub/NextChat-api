@@ -28,15 +28,9 @@ export interface RequestwUser extends Request {
     };
 }
 
-export type UserType = {
-    user_id: string;
-    user_name: string;
-    user_email: string;
-    user_password: string;
-};
-export type InvitationType = {
-    user_name: string;
-    user_email: string;
+export type InviteNotification = {
+    name: string;
+    username: string;
     sent_at: string;
     invitation_id: number;
 };
