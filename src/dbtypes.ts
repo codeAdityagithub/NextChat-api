@@ -11,6 +11,7 @@ export type User = {
 export type Conversation = {
     conversation_id: number;
     created_at: Date;
+    last_contacted_at: Date;
     // Add more conversation-related fields as needed
 };
 

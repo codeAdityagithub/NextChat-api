@@ -34,3 +34,10 @@ export type InviteNotification = {
     sent_at: string;
     invitation_id: number;
 };
+
+export type UserCardInfo = {
+    conversation_id: number;
+    last_contacted_at: Date;
+    name: string;
+    username: string;
+};
