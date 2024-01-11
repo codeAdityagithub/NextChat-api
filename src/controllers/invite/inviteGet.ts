@@ -9,11 +9,11 @@ export default async function (req: RequestwUser, res: Response) {
     if (!req.query["username"])
         return res.status(401).send("No username provided");
     if (!req.user) return res.status(403).send("You are unauthorized");
-    const names = JSON.parse(req.user.name);
+    const cur_user = JSON.parse(req.user.name);
 
     const username = req.query["username"] as string;
-    console.log(names.username);
-    if (names.username === username)
+    // console.log(cur_user.username);
+    if (cur_user.username === username)
         return res.status(400).send("Cannot send request to self!");
     // console.log(email);
 
@@ -44,8 +44,8 @@ export default async function (req: RequestwUser, res: Response) {
         if (onlineUsers.has(username)) {
             const data: InviteNotification = {
                 invitation_id: invitation[0].invitation_id,
-                name: names.name,
-                username: names.username,
+                name: cur_user.name,
+                username: cur_user.username,
                 sent_at: invitation[0].sent_at,
             };
             // console.log("user is online, sending invite");
