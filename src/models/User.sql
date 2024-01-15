@@ -17,6 +17,8 @@ CREATE TABLE conversation (
     -- Add more conversation-related fields as needed
 );
 
+CREATE TYPE message_status AS ENUM ('read', 'delivered');
+
 -- Messages table to store individual messages
 CREATE TABLE message (
     message_id SERIAL PRIMARY KEY,
@@ -24,6 +26,7 @@ CREATE TABLE message (
     sender_id uuid REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     content TEXT,
+    status message_status DEFAULT 'delivered'
     -- Add more message-related fields as needed
 );
 

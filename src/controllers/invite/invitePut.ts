@@ -8,7 +8,7 @@ import { Conversation } from "../../dbtypes";
 
 export default async function (req: RequestwUser, res: Response) {
     const { invitation_id } = req.body;
-    console.log(invitation_id);
+    console.log(invitation_id, "invitationId");
     if (!invitation_id) return res.status(400).send("No invitationId provided");
     const cur_user = JSON.parse(req.user?.name!);
     try {

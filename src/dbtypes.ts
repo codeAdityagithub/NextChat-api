@@ -22,6 +22,7 @@ export type Message = {
     sender_id: string;
     created_at: Date;
     content: string;
+    status: "read" | "delivered";
     // Add more message-related fields as needed
 };
 
