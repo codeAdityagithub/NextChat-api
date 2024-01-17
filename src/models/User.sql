@@ -57,7 +57,7 @@ UPDATE
     conversation
 SET
     last_contacted_at = NEW.created_at,
-    latest_message = LEFT(NEW.content, GREATEST(length(NEW.content), 100))
+    latest_message = LEFT(NEW.content, LEAST(length(NEW.content), 100))
 WHERE
     conversation_id = NEW.conversation_id;
 
