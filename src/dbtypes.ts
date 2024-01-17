@@ -12,6 +12,7 @@ export type Conversation = {
     conversation_id: number;
     created_at: Date;
     last_contacted_at: Date;
+    latest_message: string;
     // Add more conversation-related fields as needed
 };
 

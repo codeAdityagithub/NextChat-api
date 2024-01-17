@@ -3,8 +3,6 @@ import { Response } from "express";
 // import { IoType } from "../../types";
 import sql from "../../utils/db";
 import { IoType, RequestwUser, UserCardInfo } from "../../types";
-import { onlineUsers } from "../../utils/socketHandler";
-import { Conversation } from "../../dbtypes";
 
 export default async function (req: RequestwUser, res: Response) {
     const { invitation_id } = req.body;

@@ -39,5 +39,5 @@ export type UserCardInfo = {
     conversation_id: number;
     last_contacted_at: Date;
     name: string;
-    username: string;
+    latest_message: string;
 };

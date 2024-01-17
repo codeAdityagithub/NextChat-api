@@ -14,6 +14,7 @@ CREATE TABLE conversation (
     conversation_id SERIAL PRIMARY KEY,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_contacted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    latest_message VARCHAR(101);
     -- Add more conversation-related fields as needed
 );
 
@@ -50,11 +51,13 @@ CREATE TABLE invitation (
 );
 
 CREATE
-OR REPLACE FUNCTION update_last_contacted_at() RETURNS TRIGGER AS $ $ BEGIN
+OR REPLACE FUNCTION update_conversation() RETURNS TRIGGER AS $$ 
+BEGIN
 UPDATE
     conversation
 SET
-    last_contacted_at = NEW.created_at
+    last_contacted_at = NEW.created_at,
+    latest_message = LEFT(NEW.content, GREATEST(length(NEW.content), 100))
 WHERE
     conversation_id = NEW.conversation_id;
 
@@ -62,9 +65,9 @@ RETURN NEW;
 
 END;
 
-$ $ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
 
-CREATE TRIGGER update_last_contacted_at_trigger
+CREATE TRIGGER update_conversation_trigger
 AFTER
 INSERT
-    ON message FOR EACH ROW EXECUTE FUNCTION update_last_contacted_at();
+    ON message FOR EACH ROW EXECUTE FUNCTION update_conversation();
