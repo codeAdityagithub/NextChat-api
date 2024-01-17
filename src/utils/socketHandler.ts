@@ -13,13 +13,15 @@ export default function (io: IoType, socket: SocketType) {
     }
     socket.on("join_conversation", (conversation_id: string) => {
         socket.join(conversation_id);
+        io.to(conversation_id).emit("user_status", "online");
     });
     socket.on("leave_conversation", (conversation_id: string) => {
         socket.leave(conversation_id);
+        io.to(conversation_id).emit("user_status", "offline");
     });
     socket.on("get_status", (username: string, conversation_id: string) => {
         const status = onlineUsers.has(username) ? "online" : "offline";
-        console.log(status);
+        // console.log(status);
         io.to(conversation_id).emit("online_status", status);
     });
     socket.on("message", async (message, username, conversation_id) => {
