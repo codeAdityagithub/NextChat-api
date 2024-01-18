@@ -1,3 +1,4 @@
+import { Message } from "../dbtypes";
 import { IoType, SocketType } from "../types";
 import sql from "./db";
 
@@ -13,11 +14,9 @@ export default function (io: IoType, socket: SocketType) {
     }
     socket.on("join_conversation", (conversation_id: string) => {
         socket.join(conversation_id);
-        io.to(conversation_id).emit("user_status", "online");
     });
     socket.on("leave_conversation", (conversation_id: string) => {
         socket.leave(conversation_id);
-        io.to(conversation_id).emit("user_status", "offline");
     });
     socket.on("get_status", (username: string, conversation_id: string) => {
         const status = onlineUsers.has(username) ? "online" : "offline";
@@ -28,14 +27,15 @@ export default function (io: IoType, socket: SocketType) {
         const cur_user = socket.data.user;
         const names = JSON.parse(cur_user.name);
         try {
-            const inserted = await sql`insert into message 
+            const inserted = await sql<Message[]>`insert into message 
             (conversation_id, sender_id, content) 
             values (${conversation_id}, ${cur_user.sub}, ${message})
             returning *`;
 
+            io.to(names.username).emit("recieve_message", inserted[0]);
             if (onlineUsers.has(username)) {
-                // console.log("message to ", username);
-                io.to(username).emit("recieve_message", inserted);
+                // console.log("message to ", username, inserted[0]);
+                io.to(username).emit("recieve_message", inserted[0]);
             }
         } catch (error: any) {
             console.log(error.message);
