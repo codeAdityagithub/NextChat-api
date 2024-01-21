@@ -14,6 +14,7 @@ export default function (io: IoType, socket: SocketType) {
     }
     socket.on("join_conversation", (conversation_id: string) => {
         socket.join(conversation_id);
+        io.to(conversation_id).emit("read_messages", socket.data.user.sub);
     });
     socket.on("leave_conversation", (conversation_id: string) => {
         socket.leave(conversation_id);
@@ -24,13 +25,20 @@ export default function (io: IoType, socket: SocketType) {
         io.to(conversation_id).emit("online_status", status);
     });
     socket.on("message", async (message, username, conversation_id) => {
+        if (!message || !conversation_id || !username) return;
         const cur_user = socket.data.user;
         const names = JSON.parse(cur_user.name);
+
+        const message_object = {
+            conversation_id: conversation_id,
+            sender_id: cur_user.sub,
+            content: message,
+            status: onlineUsers.has(username) ? "read" : "delivered",
+        };
         try {
-            const inserted = await sql<Message[]>`insert into message 
-            (conversation_id, sender_id, content) 
-            values (${conversation_id}, ${cur_user.sub}, ${message})
-            returning *`;
+            const inserted = await sql<Message[]>`insert into message ${sql(
+                message_object
+            )} returning *`;
 
             io.to(names.username).emit("recieve_message", inserted[0]);
             if (onlineUsers.has(username)) {
