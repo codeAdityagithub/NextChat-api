@@ -14,7 +14,7 @@ export default function (io: IoType, socket: SocketType) {
     }
     socket.on("join_conversation", (conversation_id: string) => {
         socket.join(conversation_id);
-        io.to(conversation_id).emit("read_messages", socket.data.user.sub);
+        socket.to(conversation_id).emit("read_messages", socket.data.user.sub);
     });
     socket.on("leave_conversation", (conversation_id: string) => {
         socket.leave(conversation_id);
