@@ -36,6 +36,7 @@ export default async function (req: RequestwUser, res: Response) {
             last_contacted_at: conversation[0].last_contacted_at,
             name: cur_user.name,
             latest_message: "",
+            id: req.user?.sub,
         };
         const io: IoType = req.app.get("io");
         if (onlineUsers.has(sender_username)) {
@@ -43,6 +44,7 @@ export default async function (req: RequestwUser, res: Response) {
             io.to(sender_username).emit("add_conversation", data);
         }
         data.name = sender_name;
+        data.id = sender_id;
         io.to(cur_user.username).emit("add_conversation", data);
 
         return res.status(200).send("accepted");

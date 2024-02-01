@@ -25,15 +25,15 @@ const io = new Server(server, {
 // Use Helmet!
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(helmet());
-app.use(morgan("short"));
-app.use(cookieParser());
 app.use(
     cors({
         origin: "http://localhost:3000",
         credentials: true,
     })
 );
+app.use(helmet());
+app.use(morgan("short"));
+app.use(cookieParser());
 
 app.use(verifyJWT);
 app.use("/static", express.static(path.join(__dirname, "../public")));
@@ -43,7 +43,8 @@ app.use("/invite", inviteRouter);
 app.use("/upload", uploadRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-    console.error(err.message);
+    // console.error(err.stack);
+    console.log("err", req.url);
     res.status(500).send("Something broke!");
 });
 io.use(verifyToken);
