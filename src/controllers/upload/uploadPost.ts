@@ -6,6 +6,19 @@ import path from "path";
 import sql from "../../utils/db";
 
 export default function (req: RequestwUser, res: Response, next: NextFunction) {
+    const iat = Number(req.user?.picture?.split("=")[1]);
+    if (iat && !isNaN(iat)) {
+        // console.log(iat);
+        const curDate = new Date().getTime();
+        const diff = (curDate - iat) / 1000;
+        // console.log(diff);
+        if (diff < 60 * 60) {
+            return res
+                .status(429)
+                .json("You can only update your profile once a day");
+        }
+    }
+
     const location = path.join(
         __dirname,
         "../",
@@ -23,7 +36,7 @@ export default function (req: RequestwUser, res: Response, next: NextFunction) {
             return;
         }
         if (!files.profilePicture)
-            return res.json("No file Uploaded").status(400);
+            return res.status(400).json("No file Uploaded");
         const pp = files.profilePicture[0];
         // const ext = pp.originalFilename?.split(".").pop();
         const oldPath = pp.filepath;
@@ -34,10 +47,10 @@ export default function (req: RequestwUser, res: Response, next: NextFunction) {
             await sql`update users set has_dp=TRUE where users.id=${req.user
                 ?.sub!}`;
 
-            return res.json("File Uploaded Succesfuly").status(200);
+            return res.status(200).json("File Uploaded Succesfuly");
         } catch (error: any) {
             console.log(error?.message);
-            return res.json("Something went wronmg").status(500);
+            return res.status(400).json("Something went wronmg");
         }
     });
 }
