@@ -45,7 +45,7 @@ app.use("/upload", uploadRouter);
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     // console.error(err.stack);
     console.log("err", req.url);
-    res.status(500).send("Something broke!");
+    res.status(500).send(err.message ?? "Something Broke");
 });
 io.use(verifyToken);
 

@@ -12,7 +12,7 @@ export default function (req: RequestwUser, res: Response, next: NextFunction) {
         const curDate = new Date().getTime();
         const diff = (curDate - iat) / 1000;
         // console.log(diff);
-        if (diff < 60 * 60) {
+        if (diff < 60 * 60 * 24) {
             return res
                 .status(429)
                 .json("You can only update your profile once a day");
