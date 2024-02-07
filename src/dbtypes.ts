@@ -14,6 +14,7 @@ export type Conversation = {
     created_at: Date;
     last_contacted_at: Date;
     latest_message: string;
+    unread_message?: boolean;
     // Add more conversation-related fields as needed
 };
 

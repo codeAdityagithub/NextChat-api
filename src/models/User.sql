@@ -25,7 +25,8 @@ CREATE TABLE conversation (
     conversation_id SERIAL PRIMARY KEY,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_contacted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    latest_message VARCHAR(101);
+    latest_message VARCHAR(101),
+    unread_message BOOLEAN NOT NULL DEFAULT FALSE,
     -- Add more conversation-related fields as needed
 );
 
@@ -68,7 +69,12 @@ UPDATE
     conversation
 SET
     last_contacted_at = NEW.created_at,
+	unread_message = CASE 
+            WHEN NEW.status='read' THEN false
+            ELSE true
+		END,
     latest_message = LEFT(NEW.content, LEAST(length(NEW.content), 100))
+    
 WHERE
     conversation_id = NEW.conversation_id;
 

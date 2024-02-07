@@ -44,8 +44,13 @@ export default function (req: RequestwUser, res: Response, next: NextFunction) {
 
         try {
             await fs.rename(oldPath, newPath);
-            await sql`update users set has_dp=TRUE where users.id=${req.user
-                ?.sub!}`;
+            const has_dp = (
+                await sql`select has_dp from users where id=${req.user?.sub!}`
+            )[0];
+
+            if (has_dp)
+                await sql`update users set has_dp=TRUE where users.id=${req.user
+                    ?.sub!}`;
 
             return res.status(200).json("File Uploaded Succesfuly");
         } catch (error: any) {

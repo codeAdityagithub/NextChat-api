@@ -12,10 +12,20 @@ export default function (io: IoType, socket: SocketType) {
         onlineUsers.set(username, socket.data.user?.sub);
         socket.join(username);
     }
-    socket.on("join_conversation", (conversation_id: string) => {
-        socket.join(conversation_id);
-        socket.to(conversation_id).emit("read_messages", socket.data.user.sub);
-    });
+    socket.on(
+        "join_conversation",
+        (conversation_id: string, otherPersonUsername: string) => {
+            socket.join(conversation_id);
+            if (onlineUsers.has(otherPersonUsername))
+                socket
+                    .to(otherPersonUsername)
+                    .emit(
+                        "read_messages",
+                        socket.data.user.sub,
+                        conversation_id
+                    );
+        }
+    );
     socket.on("leave_conversation", (conversation_id: string) => {
         socket.leave(conversation_id);
     });
