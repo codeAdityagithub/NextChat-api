@@ -43,4 +43,5 @@ export type UserCardInfo = {
     latest_message: string;
     unread_message?: boolean;
     has_dp?: boolean;
+    latest_message_sender_id?: string;
 };
