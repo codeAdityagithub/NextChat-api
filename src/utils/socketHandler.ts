@@ -7,18 +7,19 @@ export const onlineUsers = new Map<string, string>();
 
 export default function (io: IoType, socket: SocketType) {
     const username = JSON.parse(socket.data.user.name).username;
-    if (!onlineUsers.has(username)) {
+    const userId = socket.data.user.sub;
+    if (!onlineUsers.has(userId)) {
         console.log("user added to set!", socket.data.user);
-        onlineUsers.set(username, socket.data.user?.sub);
-        socket.join(username);
+        onlineUsers.set(userId, username);
+        socket.join(userId);
     }
     socket.on(
         "join_conversation",
-        (conversation_id: string, otherPersonUsername: string) => {
+        (conversation_id: string, otherPersonId: string) => {
             socket.join(conversation_id);
-            if (onlineUsers.has(otherPersonUsername))
+            if (onlineUsers.has(otherPersonId))
                 socket
-                    .to(otherPersonUsername)
+                    .to(otherPersonId)
                     .emit(
                         "read_messages",
                         socket.data.user.sub,
@@ -29,13 +30,13 @@ export default function (io: IoType, socket: SocketType) {
     socket.on("leave_conversation", (conversation_id: string) => {
         socket.leave(conversation_id);
     });
-    socket.on("get_status", (username: string, conversation_id: string) => {
-        const status = onlineUsers.has(username) ? "online" : "offline";
+    socket.on("get_status", (id: string, conversation_id: string) => {
+        const status = onlineUsers.has(id) ? "online" : "offline";
         // console.log(status);
         io.to(conversation_id).emit("online_status", status);
     });
-    socket.on("message", async (message, username, conversation_id) => {
-        if (!message || !conversation_id || !username) return;
+    socket.on("message", async (message, otherPersonId, conversation_id) => {
+        if (!message || !conversation_id || !otherPersonId) return;
         const cur_user = socket.data.user;
         const names = JSON.parse(cur_user.name);
 
@@ -43,29 +44,28 @@ export default function (io: IoType, socket: SocketType) {
             conversation_id: conversation_id,
             sender_id: cur_user.sub,
             content: message,
-            status: onlineUsers.has(username) ? "read" : "delivered",
+            status: onlineUsers.has(otherPersonId) ? "read" : "delivered",
         };
         try {
             const inserted = await sql<Message[]>`insert into message ${sql(
                 message_object
             )} returning *`;
 
-            io.to(names.username).emit("recieve_message", inserted[0]);
-            if (onlineUsers.has(username)) {
-                // console.log("message to ", username, inserted[0]);
-                io.to(username).emit("recieve_message", inserted[0]);
+            io.to(cur_user.sub).emit("recieve_message", inserted[0]);
+            if (onlineUsers.has(otherPersonId)) {
+                // console.log("message to ", otherPersonId, inserted[0]);
+                io.to(otherPersonId).emit("recieve_message", inserted[0]);
             }
         } catch (error: any) {
             console.log(error.message);
-            io.to(names.username).emit("message_error", error.message, message);
+            io.to(cur_user.sub).emit("message_error", error.message, message);
         }
     });
 
     socket.on("disconnect", () => {
         console.log(socket.id, " disconnected removed from set");
-        const username = JSON.parse(socket.data.user.name).username;
-        socket.leave(username);
-        onlineUsers.delete(username);
+        socket.leave(userId);
+        onlineUsers.delete(userId);
         // console.log(onlineUsers)
     });
 }

@@ -11,15 +11,6 @@ export default async function (req: RequestwUser, res: Response) {
     try {
         await sql`update invitation set status='rejected' where invitation_id=${invitation_id}`;
 
-        // const inviteSender =
-        //     await sql`select name, username from users where id=${sender_id}`;
-        // const { username } = inviteSender[0];
-        // if (onlineUsers.has(username)) {
-        //     const io: IoType = req.app.get("io");
-        //     console.log("user is online sending reject");
-        //     io.to(username).emit("invite_reject", { invitation_id });
-        // }
-
         return res.status(200).send("rejected");
     } catch (error: any) {
         console.log(error.message);

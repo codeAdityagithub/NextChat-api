@@ -31,8 +31,10 @@ export interface RequestwUser extends Request {
 export type InviteNotification = {
     name: string;
     username: string;
-    sent_at: string;
+    sent_at: Date;
     invitation_id: number;
+    sender_id: string;
+    has_dp: boolean;
 };
 
 export type UserCardInfo = {

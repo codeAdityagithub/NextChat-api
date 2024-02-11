@@ -17,7 +17,10 @@ export default async function (req: RequestwUser, res: Response) {
         const sender_id = users[0].sender_id;
         const recipient_id = users[0].recipient_id;
 
-        const conversation: Omit<Conversation, "created_at">[] =
+        const conversation: Pick<
+            Conversation,
+            "conversation_id" | "last_contacted_at"
+        >[] =
             await sql`INSERT INTO conversation DEFAULT VALUES RETURNING conversation_id, last_contacted_at`;
 
         // if(conversation.length==0) throw new Error("database error")
@@ -39,13 +42,13 @@ export default async function (req: RequestwUser, res: Response) {
             id: req.user?.sub,
         };
         const io: IoType = req.app.get("io");
-        if (onlineUsers.has(sender_username)) {
+        if (onlineUsers.has(sender_id)) {
             console.log("user is online sending conv", data);
-            io.to(sender_username).emit("add_conversation", data);
+            io.to(sender_id).emit("add_conversation", data);
         }
         data.name = sender_name;
         data.id = sender_id;
-        io.to(cur_user.username).emit("add_conversation", data);
+        io.to(req.user?.sub!).emit("add_conversation", data);
 
         return res.status(200).send("accepted");
     } catch (error: any) {

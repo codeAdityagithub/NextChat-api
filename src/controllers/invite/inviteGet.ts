@@ -18,14 +18,14 @@ export default async function (req: RequestwUser, res: Response) {
     // console.log(email);
 
     try {
-        const user: User[] =
+        const reciever: User[] =
             await sql`select * from users where username=${username}`;
         // console.log(user)
-        if (user.length == 0)
+        if (reciever.length == 0)
             return res.status(401).send("No such user exists");
 
         const rev_inv = await sql`select invitation_id from invitation 
-            where sender_id=${user[0].id!} and recipient_id=${
+            where sender_id=${reciever[0].id!} and recipient_id=${
             req.user.sub
         } and status in ('pending', 'accepted')`;
 
@@ -36,22 +36,24 @@ export default async function (req: RequestwUser, res: Response) {
         const invitation =
             await sql`insert into invitation (sender_id, recipient_id) values (${
                 req.user.sub
-            }, ${user[0].id!}) returning *`;
-        console.log(invitation);
+            }, ${reciever[0].id!}) returning *`;
+        // console.log(invitation);
 
         if (invitation.length == 0)
             throw new Error("Couldn't send invite. Try again later!");
-        if (onlineUsers.has(username)) {
+        if (onlineUsers.has(reciever[0].id!)) {
             const data: InviteNotification = {
                 invitation_id: invitation[0].invitation_id,
                 name: cur_user.name,
                 username: cur_user.username,
                 sent_at: invitation[0].sent_at,
+                has_dp: req.user?.picture ? true : false,
+                sender_id: req.user.sub,
             };
             // console.log("user is online, sending invite");
             const io: IoType = req.app.get("io");
             // const userId = onlineUsers.get(username) as string;
-            io.to(username).emit("invite_request", data);
+            io.to(reciever[0].id!).emit("invite_request", data);
         }
         res.status(200).send("Invite sent sucessfully");
     } catch (error: any) {
