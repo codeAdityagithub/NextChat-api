@@ -19,7 +19,7 @@ import path from "path";
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-    cors: { origin: "http://localhost:3000", credentials: true },
+    cors: { origin: process.env.CLIENT_URL, credentials: true },
 });
 
 // Use Helmet!
@@ -27,7 +27,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
     cors({
-        origin: "http://localhost:3000",
+        origin: process.env.CLIENT_URL,
         credentials: true,
     })
 );
