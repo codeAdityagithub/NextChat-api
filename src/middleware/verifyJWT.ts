@@ -8,7 +8,12 @@ export default async function (
     next: NextFunction
 ) {
     if (req.url.startsWith("/static")) return next();
-    const token: string = req.cookies["next-auth.session-token"];
+    const token: string =
+        req.cookies[
+            process.env.NODE_ENV === "development"
+                ? "next-auth.session-token"
+                : "__Secure-next-auth.session-token"
+        ];
     // console.log(token, "token");
     if (!token) return next(new Error("No access token!"));
 
