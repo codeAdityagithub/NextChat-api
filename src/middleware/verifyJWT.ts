@@ -8,14 +8,14 @@ export default async function (
     next: NextFunction
 ) {
     if (req.url.startsWith("/static")) return next();
-    const token: string =
+    const token: string | undefined =
         req.cookies[
             process.env.NODE_ENV === "development"
                 ? "next-auth.session-token"
                 : "__Secure-next-auth.session-token"
         ];
     // console.log(token, "token");
-    if (!token) return next(new Error("No access token!"));
+    if (!token) return next(new Error("You dont have access token!"));
 
     jwt.verify(token, process.env.AUTH_SECRET!, (err, decoded) => {
         if (err) return next(err);
