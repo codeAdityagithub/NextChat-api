@@ -38,6 +38,7 @@ export default async function (req: RequestwUser, res: Response) {
                 req.user.sub
             }, ${reciever[0].id!}) returning *`;
         // console.log(invitation);
+        const mydp = await sql`select dp from users where id=${req.user.sub}`;
 
         if (invitation.length == 0)
             throw new Error("Couldn't send invite. Try again later!");
@@ -47,8 +48,8 @@ export default async function (req: RequestwUser, res: Response) {
                 name: cur_user.name,
                 username: cur_user.username,
                 sent_at: invitation[0].sent_at,
-                has_dp: req.user?.picture ? true : false,
                 sender_id: req.user.sub,
+                dp: mydp[0].dp,
             };
             // console.log("user is online, sending invite");
             const io: IoType = req.app.get("io");

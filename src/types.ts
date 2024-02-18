@@ -22,9 +22,9 @@ export interface RequestwUser extends Request {
     user?: {
         name: string;
         email: string;
-        picture?: string;
+        // picture?: string;
         sub: string;
-        iat: number;
+        iat?: number;
     };
 }
 
@@ -34,7 +34,7 @@ export type InviteNotification = {
     sent_at: Date;
     invitation_id: number;
     sender_id: string;
-    has_dp: boolean;
+    dp: string;
 };
 
 export type UserCardInfo = {
@@ -44,6 +44,6 @@ export type UserCardInfo = {
     id?: string;
     latest_message: string;
     unread_message?: boolean;
-    has_dp?: boolean;
+    dp?: string;
     latest_message_sender_id?: string;
 };

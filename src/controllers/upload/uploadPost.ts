@@ -5,8 +5,15 @@ import fs from "fs/promises";
 import path from "path";
 import sql from "../../utils/db";
 
-export default function (req: RequestwUser, res: Response, next: NextFunction) {
-    const iat = Number(req.user?.picture?.split("=")[1]);
+export default async function (
+    req: RequestwUser,
+    res: Response,
+    next: NextFunction
+) {
+    const mydp = (await sql`select dp from users where id=${req.user?.sub!}`)[0]
+        .dp;
+    const iat = mydp ? Number(mydp.split("=")[1]) : NaN;
+
     if (iat && !isNaN(iat)) {
         // console.log(iat);
         const curDate = new Date().getTime();
@@ -44,13 +51,12 @@ export default function (req: RequestwUser, res: Response, next: NextFunction) {
 
         try {
             await fs.rename(oldPath, newPath);
-            const has_dp = (
-                await sql`select has_dp from users where id=${req.user?.sub!}`
-            )[0];
 
-            if (has_dp)
-                await sql`update users set has_dp=TRUE where users.id=${req.user
-                    ?.sub!}`;
+            const updated = new Date().getTime();
+            const dpUrl = `${process.env.API_URL}/static/profiles/${req.user?.sub}.jpg?updated=${updated}`;
+
+            await sql`update users set dp=${dpUrl} where users.id=${req.user
+                ?.sub!}`;
 
             return res.status(200).json("File Uploaded Succesfuly");
         } catch (error: any) {
