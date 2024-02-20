@@ -2,15 +2,15 @@ import { Message } from "../dbtypes";
 import { IoType, SocketType } from "../types";
 import sql from "./db";
 
-export const onlineUsers = new Map<string, string>();
+export const onlineUsers = new Set<string>();
 // const messages= new Map<string, Array<>>();
 
 export default function (io: IoType, socket: SocketType) {
-    const username = JSON.parse(socket.data.user.name).username;
-    const userId = socket.data.user.sub;
+    const username = JSON.parse(socket.data.user?.name).username;
+    const userId = socket.data.user?.sub;
     if (!onlineUsers.has(userId)) {
-        console.log("user added to set!", socket.data.user);
-        onlineUsers.set(userId, username);
+        // console.log("user added to set!", username);
+        onlineUsers.add(userId);
         socket.join(userId);
     }
     socket.on(
@@ -22,7 +22,7 @@ export default function (io: IoType, socket: SocketType) {
                     .to(otherPersonId)
                     .emit(
                         "read_messages",
-                        socket.data.user.sub,
+                        socket.data.user?.sub,
                         conversation_id
                     );
         }

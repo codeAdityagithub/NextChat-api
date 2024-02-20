@@ -53,7 +53,6 @@ export default async function (req: RequestwUser, res: Response) {
             };
             // console.log("user is online, sending invite");
             const io: IoType = req.app.get("io");
-            // const userId = onlineUsers.get(username) as string;
             io.to(reciever[0].id!).emit("invite_request", data);
         }
         res.status(200).send("Invite sent sucessfully");

@@ -22,7 +22,6 @@ export interface RequestwUser extends Request {
     user?: {
         name: string;
         email: string;
-        // picture?: string;
         sub: string;
         iat?: number;
     };

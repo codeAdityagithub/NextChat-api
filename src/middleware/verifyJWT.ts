@@ -8,12 +8,7 @@ export default async function (
     next: NextFunction
 ) {
     if (req.url.startsWith("/static")) return next();
-    const token: string | undefined =
-        req.cookies[
-            process.env.NODE_ENV === "development"
-                ? "next-auth.session-token"
-                : "__Secure-next-auth.session-token"
-        ];
+    const token: string | undefined = req.headers.authorization?.split(" ")[1];
     // console.log(token, "token");
     if (!token) return next(new Error("You dont have access token!"));
 
@@ -22,6 +17,7 @@ export default async function (
         if (!decoded) return next(new Error("Token is not Valid!"));
         // @ts-expect-error
         req.user = decoded;
+        console.log(decoded);
     });
 
     next();
