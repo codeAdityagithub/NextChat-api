@@ -6,7 +6,7 @@ CREATE TABLE users (
     username VARCHAR NOT NULL UNIQUE,
     email VARCHAR NOT NULL UNIQUE,
     password VARCHAR,
-    has_dp BOOLEAN NOT NULL DEFAULT FALSE,
+    dp VARCHAR,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
@@ -19,6 +19,11 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE TRIGGER trigger_update_updated_at
+BEFORE
+UPDATE
+    ON users FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
 
 -- Conversations table to store information about chat conversations
 CREATE TABLE conversation (
@@ -28,6 +33,7 @@ CREATE TABLE conversation (
     latest_message VARCHAR(101),
     unread_message BOOLEAN NOT NULL DEFAULT FALSE,
     latest_message_sender_id uuid,
+
     -- Add more conversation-related fields as needed
 );
 
@@ -74,8 +80,9 @@ SET
             WHEN NEW.status='read' THEN false
             ELSE true
 		END,
-    latest_message = LEFT(NEW.content, LEAST(length(NEW.content), 100)),
+    latest_message = LEFT(NEW.content, LEAST(length(NEW.content), 100))
     latest_message_sender_id=NEW.sender_id
+    
 WHERE
     conversation_id = NEW.conversation_id;
 
@@ -85,7 +92,7 @@ END;
 
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER update_conversation_trigger
+CREATE OR REPLACE TRIGGER update_conversation_trigger
 AFTER
 INSERT
     ON message FOR EACH ROW EXECUTE FUNCTION update_conversation();
