@@ -7,6 +7,7 @@ import sql from "./utils/db";
 import authRouter from "./routers/authRouter";
 import inviteRouter from "./routers/inviteRouter";
 import uploadRouter from "./routers/uploadRouter";
+import messageRouter from "./routers/messageRouter";
 import { Server } from "socket.io";
 import cors from "cors";
 
@@ -41,11 +42,12 @@ app.use("/static", express.static(path.join(__dirname, "../public")));
 app.use("/auth", authRouter);
 app.use("/invite", inviteRouter);
 app.use("/upload", uploadRouter);
+app.use("/message", messageRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     // console.error(err.stack);
     console.log("err", req.url);
-    res.status(500).send(err.message ?? "Something Broke");
+    res.status(500).send(err.message ?? "Something Went Wrong");
 });
 io.use(verifyToken);
 

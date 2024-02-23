@@ -43,7 +43,7 @@ export default async function (req: RequestwUser, res: Response) {
         };
         const io: IoType = req.app.get("io");
         if (onlineUsers.has(sender_id)) {
-            console.log("user is online sending conv", data);
+            // console.log("user is online sending conv", data);
             io.to(sender_id).emit("add_conversation", data);
         }
         data.name = sender_name;

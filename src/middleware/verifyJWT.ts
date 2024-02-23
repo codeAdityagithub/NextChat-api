@@ -17,7 +17,7 @@ export default async function (
         if (!decoded) return next(new Error("Token is not Valid!"));
         // @ts-expect-error
         req.user = decoded;
-        console.log(decoded);
+        // console.log(decoded);
     });
 
     next();

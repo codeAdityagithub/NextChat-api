@@ -15,7 +15,7 @@ export default function (socket: SocketType, next: SocketMiddleWare) {
     jwt.verify(token, process.env.AUTH_SECRET!, (err, decoded) => {
         if (err) return next(err);
         if (!decoded) return next(new Error("Token is not Valid!"));
-        console.log(decoded);
+        // console.log(decoded);
         socket.data.user = decoded;
     });
 
