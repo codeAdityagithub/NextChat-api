@@ -36,7 +36,13 @@ app.use(helmet());
 app.use(morgan("short"));
 app.use(cookieParser());
 
-app.get("/cron", (req, res) => {
+app.get("/cron", async (req, res) => {
+    try {
+        await fetch("https://ncsify.onrender.com/cron");
+    } catch (error: any) {
+        console.log(error?.message);
+    }
+
     return res.status(200).send("Cronjob executed");
 });
 
