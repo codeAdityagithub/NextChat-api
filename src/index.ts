@@ -36,6 +36,10 @@ app.use(helmet());
 app.use(morgan("short"));
 app.use(cookieParser());
 
+app.get("/cron", (req, res) => {
+    return res.status(200).send("Cronjob executed");
+});
+
 app.use(verifyJWT);
 app.use("/static", express.static(path.join(__dirname, "../public")));
 
