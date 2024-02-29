@@ -19,10 +19,10 @@ export default async function (
         const curDate = new Date().getTime();
         const diff = (curDate - iat) / 1000;
         // console.log(diff);
-        if (diff < 60 * 60 * 24) {
+        if (diff < 60 * 60 * 2) {
             return res
                 .status(429)
-                .json("You can only update your profile once a day");
+                .json("You can only update your profile once every 2 hours");
         }
     }
 

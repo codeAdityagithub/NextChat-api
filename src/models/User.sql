@@ -38,6 +38,7 @@ CREATE TABLE conversation (
 );
 
 CREATE TYPE message_status AS ENUM ('read', 'delivered');
+CREATE TYPE message_type AS ENUM ('text', 'image');
 
 -- Messages table to store individual messages
 CREATE TABLE message (
@@ -46,6 +47,7 @@ CREATE TABLE message (
     sender_id uuid REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     content TEXT,
+    type message_type DEFAULT 'text',
     status message_status DEFAULT 'delivered'
     -- Add more message-related fields as needed
 );
