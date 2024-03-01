@@ -56,7 +56,7 @@ app.use("/message", messageRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     // console.error(err.stack);
-    console.log("err", req.url);
+    console.log("err", err.message ?? "Something Went Wrong");
     res.status(500).send(err.message ?? "Something Went Wrong");
 });
 io.use(verifyToken);

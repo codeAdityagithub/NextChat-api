@@ -27,6 +27,7 @@ export type Message = {
     created_at: Date;
     content: string;
     status: "read" | "delivered";
+    type: "text" | "image";
     // Add more message-related fields as needed
 };
 

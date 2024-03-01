@@ -25,7 +25,6 @@ export default async function (req: RequestwUser, res: Response) {
         const inserted = await sql<Message[]>`insert into message ${sql(
             message_object
         )} returning *`;
-
         io.to(cur_user.sub).emit("recieve_message", inserted[0]);
         if (onlineUsers.has(otherPersonId)) {
             // console.log("message to ", otherPersonId, inserted[0]);
