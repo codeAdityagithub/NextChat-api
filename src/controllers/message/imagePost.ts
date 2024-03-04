@@ -59,7 +59,7 @@ export default async function (
             const inserted = await sql<Message[]>`insert into message ${sql(
                 message_object
             )} returning *`;
-            console.log(inserted[0]);
+            // console.log(inserted[0]);
             const io: IoType = req.app.get("io");
             io.to(cur_user.sub).emit("recieve_message", inserted[0]);
             if (onlineUsers.has(otherPersonId)) {
