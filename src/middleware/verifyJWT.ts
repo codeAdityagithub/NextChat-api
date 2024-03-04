@@ -18,7 +18,6 @@ export default async function (
         // @ts-expect-error
         req.user = decoded;
         // console.log(decoded);
+        next();
     });
-
-    next();
 }
