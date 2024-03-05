@@ -5,6 +5,7 @@ import sql from "../../utils/db";
 import { onlineUsers } from "../../utils/socketHandler";
 import fs from "fs/promises";
 import path from "path";
+import { existsSync } from "fs";
 
 const location = path.join(__dirname, "../", "../", "../", "chatImages");
 
@@ -24,8 +25,7 @@ export default async function (req: RequestwUser, res: Response) {
         )[0].content;
         const fileName = fileUrl.split("/").pop();
         const filePath = path.join(location, fileName!);
-
-        await fs.unlink(filePath);
+        if (existsSync(filePath)) await fs.unlink(filePath);
 
         await sql`delete from message where message_id=${message_id}`;
         io.to(cur_user.sub).emit("delete_message", message_id);
