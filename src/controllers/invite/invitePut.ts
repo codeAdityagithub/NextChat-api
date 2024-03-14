@@ -32,14 +32,18 @@ export default async function (req: RequestwUser, res: Response) {
 
         // ****** this req is sent by the reciever*****
         const sender =
-            await sql`select name as sender_name, username as sender_username from users where id=${sender_id}`;
-        const { sender_name, sender_username } = sender[0];
+            await sql`select name as sender_name, username as sender_username, dp as sender_dp from users where id=${sender_id}`;
+        const reciever_dp = await sql`select dp from users where id=${req.user
+            ?.sub!}`;
+
+        const { sender_name, sender_username, sender_dp } = sender[0];
         const data: UserCardInfo = {
             conversation_id: conversation_id,
             last_contacted_at: conversation[0].last_contacted_at,
             name: cur_user.name,
             latest_message: "",
             id: req.user?.sub,
+            dp: reciever_dp[0].dp ?? null,
         };
         const io: IoType = req.app.get("io");
         if (onlineUsers.has(sender_id)) {
@@ -48,6 +52,7 @@ export default async function (req: RequestwUser, res: Response) {
         }
         data.name = sender_name;
         data.id = sender_id;
+        data.dp = sender_dp;
         io.to(req.user?.sub!).emit("add_conversation", data);
 
         return res.status(200).send("accepted");
