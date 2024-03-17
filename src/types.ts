@@ -46,3 +46,11 @@ export type UserCardInfo = {
     dp?: string;
     latest_message_sender_id?: string;
 };
+
+export type SentInvites = {
+    name: string;
+    username: string;
+    sent_at: Date;
+    dp: string | null;
+    status: "pending" | "accepted" | "rejected";
+};

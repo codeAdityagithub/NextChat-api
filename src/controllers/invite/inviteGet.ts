@@ -1,8 +1,13 @@
 import { Response } from "express";
 import { onlineUsers } from "../../utils/socketHandler";
-import { InviteNotification, IoType, RequestwUser } from "../../types";
+import {
+    InviteNotification,
+    IoType,
+    RequestwUser,
+    SentInvites,
+} from "../../types";
 import sql from "../../utils/db";
-import { User } from "../../dbtypes";
+import { Invitation, User } from "../../dbtypes";
 
 // user for sendInvite
 export default async function (req: RequestwUser, res: Response) {
@@ -42,6 +47,7 @@ export default async function (req: RequestwUser, res: Response) {
 
         if (invitation.length == 0)
             throw new Error("Couldn't send invite. Try again later!");
+        const io: IoType = req.app.get("io");
         if (onlineUsers.has(reciever[0].id!)) {
             const data: InviteNotification = {
                 invitation_id: invitation[0].invitation_id,
@@ -52,10 +58,17 @@ export default async function (req: RequestwUser, res: Response) {
                 dp: mydp[0].dp,
             };
             // console.log("user is online, sending invite");
-            const io: IoType = req.app.get("io");
             io.to(reciever[0].id!).emit("invite_request", data);
         }
-        res.status(200).send("Invite sent sucessfully");
+        const sentinvite: SentInvites = {
+            dp: reciever[0].dp!,
+            name: reciever[0].name,
+            username: reciever[0].username,
+            sent_at: invitation[0].sent_at,
+            status: invitation[0].status,
+        };
+        io.to(req.user.sub).emit("send_invite", sentinvite);
+        res.status(200).send("invite sent");
     } catch (error: any) {
         console.log(error.message);
         return res.status(500).send("Couldn't send the invite!");
